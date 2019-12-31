@@ -36,6 +36,8 @@ for rect in rects:
     # sp(img, rect) 返回值: dlib.full_object_detection 对象,
     # 通过 .part 方法获取关键点坐标: ret.part(0).x, ret.part(0).y,
     # 通过 .num_parts 属性获取关键点的总数.
+    # 通过 .rect 获取人脸的 bounding box <class 'dlib.rectangle'> 对象.
+    # 通过 .left, .right, .top, .bottom 获取 bounding box 的四点.
     face_rects_list.append(sp(image, rect))
 
 # 获取检测到的人脸位置的 bounding box 截图.
