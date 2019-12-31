@@ -4,6 +4,9 @@
 参考链接:
 http://dlib.net/face_alignment.py.html
 https://my.oschina.net/wujux/blog/1622777
+
+模型下载链接:
+http://dlib.net/files/shape_predictor_5_face_landmarks.dat.bz2
 """
 import cv2 as cv
 import dlib
