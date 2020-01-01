@@ -32,7 +32,7 @@ def rect_to_bounding_box(rect):
 
 def landmarks_to_ndarray(shape, dtype=np.int):
     """
-    :param shape: 是 dlib 脸部特征检测的输出，一个 shape 里包含了脸部特征的 5 个点位.
+    :param shape: 是 dlib 脸部特征检测的输出，一个 shape 里包含了脸部特征的 n 个点位.
     :param dtype:
     :return:
     """
