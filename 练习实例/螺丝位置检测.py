@@ -1,6 +1,12 @@
 """
 参考链接:
 http://dlib.net/train_object_detector.py.html
+
+目标:
+原目标是, 检测出图像中螺丝孔的位置, 并判断有哪些螺丝已安装, 哪些没有安装.
+这里的实现可以检测出未安装的螺丝的位置.
+
+算法原理是 HOG 特征 + SVM 分类. 但是我用 opencv 的 HOG + SVM 没有成功.
 """
 import os
 import cv2 as cv
@@ -31,7 +37,7 @@ def build_options():
     # train_simple_object_detector() 函数的参数.
     options = dlib.simple_object_detector_training_options()
 
-    # 给人脸增加左右翻转变化
+    # 左右翻转变化, 数据增强.
     options.add_left_right_image_flips = True
 
     # 训练器是支持向量机, 所以有一个 C 参数, 取较大的值将使其在训练集上拟合的更好, 但有可能过拟合.
@@ -40,6 +46,7 @@ def build_options():
 
     # 告诉训练器你有多少个 CPU, 以提高训练速度.
     options.num_threads = 4
+    # 如果为 True train_simple_object_detector() 将在模型训练时打印出详细信息.
     options.be_verbose = True
     return options
 
@@ -53,26 +60,12 @@ def train_model(training_xml_path, options):
     return
 
 
-def eval_model():
-    # 查看训练模型在训练集和测试集的效果.
-    faces_folder = "../dataset/faces"
-    training_xml_path = os.path.join(faces_folder, "training.xml")
-    testing_xml_path = os.path.join(faces_folder, "testing.xml")
-
-    # 现在我们有了一个人脸检测器, 我们来测试它的准确率, 召回率, 平均精度.
-    print("Training accuracy: {}".format(
-        dlib.test_simple_object_detector(training_xml_path, "../dataset/temp/detector.svm")))
-    print("Testing accuracy: {}".format(
-        dlib.test_simple_object_detector(testing_xml_path, "../dataset/temp/detector.svm")))
-    return
-
-
 def demo1():
     # 不使用 XML 文件来训练模型.
     # 最后, 我们不一定需要用 XML 文件来做为训练器 train_simple_object_detector() 函数的输入.
     # 也可以如下这样:
     # 将图片对象放入一个列表中
-    faces_folder = "dataset/other"
+    faces_folder = "../dataset/other/luosi"
     images = [dlib.load_rgb_image(faces_folder + '/luosi.jpg')]
 
     # box 的标记.
@@ -87,7 +80,7 @@ def demo1():
     detector2 = dlib.train_simple_object_detector(images, boxes, build_options())
 
     # 将训练好的模型保存.
-    detector2.save('dataset/other/temp/detector.svm')
+    detector2.save('../dataset/other/luosi/temp/detector.svm')
 
     # 通过以下方法来查看训练模型的效果.
     print("\nTraining accuracy: {}".format(
@@ -98,9 +91,9 @@ def demo1():
 def demo2():
     # 在任意图像中执行人脸检测任务.
     # 加载检测器
-    detector = dlib.simple_object_detector("dataset/other/temp/detector.svm")
+    detector = dlib.simple_object_detector("../dataset/other/luosi/temp/detector.svm")
 
-    image_path = "dataset/other/luosi.jpg"
+    image_path = "../dataset/other/luosi/luosi.jpg"
     image = cv.imread(image_path)
     image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
     rects = detector(image_rgb)
@@ -114,7 +107,7 @@ def demo2():
 
 def demo3():
     # 我们可以查看我们训练好的人脸 HOG 滤波器
-    detector = dlib.fhog_object_detector("dataset/other/temp/detector.svm")
+    detector = dlib.fhog_object_detector("../dataset/other/luosi/temp/detector.svm")
     win_det = dlib.image_window()
     win_det.set_image(detector)
     dlib.hit_enter_to_continue()
